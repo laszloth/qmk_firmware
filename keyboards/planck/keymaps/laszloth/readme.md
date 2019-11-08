@@ -1,2 +1,4 @@
-# The Default Planck Layout
+# The 'laszloth' Planck Layout
 
+## TODO
+- [ ] EEPROM store
