@@ -304,6 +304,7 @@ void encoder_update(bool clockwise) {
 }
 
 void dip_switch_update_user(uint8_t index, bool active) {
+    dprintf("%d:%s\n", __LINE__, __FUNCTION__);
     switch (index) {
         case 0: {
 #ifdef AUDIO_ENABLE
@@ -331,6 +332,12 @@ void dip_switch_update_user(uint8_t index, bool active) {
             } else {
                 muse_mode = false;
             }
+            break;
+        case 2:
+#ifdef AUDIO_CLICKY
+            active ? clicky_on() : clicky_off();
+#endif
+            break;
     }
 }
 
