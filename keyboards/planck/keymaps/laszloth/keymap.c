@@ -194,7 +194,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case QWERTY:
       if (record->event.pressed) {
-        print("mode just switched to qwerty and this is a huge string\n");
         set_single_persistent_default_layer(_QWERTY);
       }
       return false;
@@ -272,6 +271,12 @@ uint16_t muse_counter = 0;
 uint8_t muse_offset = 70;
 uint16_t muse_tempo = 50;
 
+static void encoder_tap_code(uint8_t code) {
+    register_code(code);
+    wait_ms(10);
+    unregister_code(code);
+}
+
 void encoder_update(bool clockwise) {
   if (muse_mode) {
     if (IS_LAYER_ON(_RAISE)) {
@@ -289,17 +294,11 @@ void encoder_update(bool clockwise) {
     }
   } else {
     if (clockwise) {
-      #ifdef MOUSEKEY_ENABLE
-        tap_code(KC_MS_WH_DOWN);
-      #else
-        tap_code(KC_PGDN);
-      #endif
+      dprintf("encoder CW\n");
+      encoder_tap_code(KC_VOLU);
     } else {
-      #ifdef MOUSEKEY_ENABLE
-        tap_code(KC_MS_WH_UP);
-      #else
-        tap_code(KC_PGUP);
-      #endif
+      dprintf("encoder CCW\n");
+      encoder_tap_code(KC_VOLD);
     }
   }
 }
