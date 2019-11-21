@@ -278,6 +278,12 @@ static void encoder_tap_code(uint8_t code) {
 }
 
 void encoder_update(bool clockwise) {
+  /* encoder direction is reversed
+   * see: https://github.com/qmk/qmk_firmware/pull/7325 */
+  clockwise = !clockwise;
+
+  dprintf("Encoder %s\n", clockwise ? "CW" : "CCW");
+
   if (muse_mode) {
     if (IS_LAYER_ON(_RAISE)) {
       if (clockwise) {
@@ -294,10 +300,8 @@ void encoder_update(bool clockwise) {
     }
   } else {
     if (clockwise) {
-      dprintf("encoder CW\n");
       encoder_tap_code(KC_VOLU);
     } else {
-      dprintf("encoder CCW\n");
       encoder_tap_code(KC_VOLD);
     }
   }
