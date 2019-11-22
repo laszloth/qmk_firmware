@@ -9,7 +9,7 @@
                               SONG(DVORAK_SOUND) \
                             }
 #define AUDIO_CLICKY
-#define AUDIO_CLICKY_FREQ_RANDOMNESS 1.0f
+#define AUDIO_CLICKY_FREQ_RANDOMNESS 5.0f
 #endif
 
 /*
