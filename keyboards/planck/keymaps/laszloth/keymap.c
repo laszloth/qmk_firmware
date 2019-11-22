@@ -316,7 +316,7 @@ void encoder_update(bool clockwise) {
 }
 
 void dip_switch_update_user(uint8_t index, bool active) {
-    dprintf("%d:%s\n", __LINE__, __FUNCTION__);
+    dprintf("DIP state change: %u to %s\n", index+1, active ? "ON" : "OFF");
     switch (index) {
         case 0: {
 #ifdef AUDIO_ENABLE
