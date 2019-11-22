@@ -45,6 +45,8 @@ enum {
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
 
+static bool disable_keyboard_input;
+
 /* use tap dance for shift/caps lock */
 qk_tap_dance_action_t tap_dance_actions[] = {
   [TD_CLCK] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_CLCK),
@@ -268,7 +270,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false;
       break;
   }
-  return true;
+  return !disable_keyboard_input;
 }
 
 bool muse_mode = false;
@@ -347,6 +349,9 @@ void dip_switch_update_user(uint8_t index, bool active) {
 #ifdef AUDIO_CLICKY
             active ? clicky_on() : clicky_off();
 #endif
+            break;
+        case 3:
+            disable_keyboard_input = active;
             break;
     }
 }
