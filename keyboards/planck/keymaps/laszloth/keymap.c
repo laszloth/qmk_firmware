@@ -45,6 +45,17 @@ enum {
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
 
+#ifdef AUDIO_ENABLE
+  static bool muse_mode = false;
+  static uint8_t last_muse_note = 0;
+  static uint16_t muse_counter = 0;
+  static uint8_t muse_offset = 70;
+  static uint16_t muse_tempo = 50;
+
+  static float plover_song[][2]    = SONG(PLOVER_SOUND);
+  static float plover_gb_song[][2] = SONG(PLOVER_GOODBYE_SOUND);
+#endif
+
 static bool disable_keyboard_input;
 
 /* use tap dance for shift/caps lock */
@@ -183,11 +194,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
-#ifdef AUDIO_ENABLE
-  float plover_song[][2]     = SONG(PLOVER_SOUND);
-  float plover_gb_song[][2]  = SONG(PLOVER_GOODBYE_SOUND);
-#endif
-
 layer_state_t layer_state_set_user(layer_state_t state) {
   return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
 }
@@ -216,10 +222,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       if (record->event.pressed) {
         register_code(KC_RSFT);
         #ifdef RGBLIGHT_ENABLE
-          if (IS_LAYER_ON(_LOWER))
+          if (IS_LAYER_ON(_LOWER)) {
             rgblight_mode(rgblight_get_mode());
-          else
+          } else {
             rgblight_step_noeeprom();
+          }
         #endif
         #ifdef BACKLIGHT_ENABLE
           backlight_step();
@@ -273,12 +280,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return !disable_keyboard_input;
 }
 
-bool muse_mode = false;
-uint8_t last_muse_note = 0;
-uint16_t muse_counter = 0;
-uint8_t muse_offset = 70;
-uint16_t muse_tempo = 50;
-
 static void encoder_tap_code(uint8_t code) {
     register_code(code);
     wait_ms(10);
@@ -292,6 +293,7 @@ void encoder_update(bool clockwise) {
 
   dprintf("Encoder %s\n", clockwise ? "CW" : "CCW");
 
+#ifdef AUDIO_ENABLE
   if (muse_mode) {
     if (IS_LAYER_ON(_RAISE)) {
       if (clockwise) {
@@ -307,12 +309,15 @@ void encoder_update(bool clockwise) {
       }
     }
   } else {
+#endif
     if (clockwise) {
       encoder_tap_code(KC_VOLU);
     } else {
       encoder_tap_code(KC_VOLD);
     }
+#ifdef AUDIO_ENABLE
   }
+#endif
 }
 
 void dip_switch_update_user(uint8_t index, bool active) {
@@ -339,11 +344,9 @@ void dip_switch_update_user(uint8_t index, bool active) {
             break;
         }
         case 1:
-            if (active) {
-                muse_mode = true;
-            } else {
-                muse_mode = false;
-            }
+#ifdef AUDIO_ENABLE
+            muse_mode = active;
+#endif
             break;
         case 2:
 #ifdef AUDIO_CLICKY
@@ -356,8 +359,8 @@ void dip_switch_update_user(uint8_t index, bool active) {
     }
 }
 
-void matrix_scan_user(void) {
 #ifdef AUDIO_ENABLE
+void matrix_scan_user(void) {
     if (muse_mode) {
         if (muse_counter == 0) {
             uint8_t muse_note = muse_offset + SCALE[muse_clock_pulse()];
@@ -374,8 +377,8 @@ void matrix_scan_user(void) {
             muse_counter = 0;
         }
     }
-#endif
 }
+#endif
 
 bool music_mask_user(uint16_t keycode) {
   switch (keycode) {
