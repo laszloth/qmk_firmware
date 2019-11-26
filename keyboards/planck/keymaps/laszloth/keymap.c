@@ -349,12 +349,12 @@ void dip_switch_update_user(uint8_t index, bool active) {
 #endif
             break;
         case 2:
+            disable_keyboard_input = active;
+            break;
+        case 3:
 #ifdef AUDIO_CLICKY
             active ? clicky_on() : clicky_off();
 #endif
-            break;
-        case 3:
-            disable_keyboard_input = active;
             break;
     }
 }
