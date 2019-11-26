@@ -40,3 +40,5 @@
 #define ENCODER_RESOLUTION 4
 
 #define TAPPING_TERM 175
+#define COMBO_COUNT 1
+#define COMBO_TERM 250

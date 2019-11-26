@@ -38,9 +38,13 @@ enum planck_keycodes {
   MACRO_COPYALL,
 };
 
-enum {
+enum td_actions {
   TD_CLCK,
   TD_ETAB,
+};
+
+enum combo_events {
+  COMBO_ASD,
 };
 
 #define LOWER MO(_LOWER)
@@ -63,6 +67,12 @@ static bool disable_keyboard_input;
 qk_tap_dance_action_t tap_dance_actions[] = {
   [TD_CLCK] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_CLCK),
   [TD_ETAB] = ACTION_TAP_DANCE_DOUBLE(KC_ESC,  KC_TAB),
+};
+
+const uint16_t PROGMEM combo_asd[] = {KC_A, KC_S, KC_D, COMBO_END};
+
+combo_t key_combos[COMBO_COUNT] = {
+  [COMBO_ASD] = COMBO_ACTION(combo_asd),
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -280,6 +290,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       break;
   }
   return !disable_keyboard_input;
+}
+
+void process_combo_event(uint8_t combo_index, bool pressed) {
+  if (pressed) {
+    dprintf("Combo event #%u registered\n", combo_index);
+
+    switch(combo_index) {
+      case COMBO_ASD:
+        tap_code16(KC_ESC);
+        break;
+    }
+  }
 }
 
 static void encoder_tap_code(uint8_t code) {
