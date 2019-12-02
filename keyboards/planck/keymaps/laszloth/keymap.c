@@ -38,35 +38,22 @@ enum planck_keycodes {
   MACRO_COPYALL,
 };
 
+#ifdef TAP_DANCE_ENABLE
 enum td_actions {
   TD_CLCK,
   TD_ETAB,
 };
 
-enum combo_events {
-  COMBO_ASD,
-};
-
-#define LOWER MO(_LOWER)
-#define RAISE MO(_RAISE)
-
-#ifdef AUDIO_ENABLE
-  static bool muse_mode = false;
-  static uint8_t last_muse_note = 0;
-  static uint16_t muse_counter = 0;
-  static uint8_t muse_offset = 70;
-  static uint16_t muse_tempo = 50;
-
-  static float plover_song[][2]    = SONG(PLOVER_SOUND);
-  static float plover_gb_song[][2] = SONG(PLOVER_GOODBYE_SOUND);
-#endif
-
-static bool disable_keyboard_input;
-
 /* use tap dance for shift/caps lock */
 qk_tap_dance_action_t tap_dance_actions[] = {
   [TD_CLCK] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_CLCK),
   [TD_ETAB] = ACTION_TAP_DANCE_DOUBLE(KC_ESC,  KC_TAB),
+};
+#endif /* ifdef TAP_DANCE_ENABLE */
+
+#ifdef COMBO_ENABLE
+enum combo_events {
+  COMBO_ASD,
 };
 
 const uint16_t PROGMEM combo_asd[] = {KC_A, KC_S, KC_D, COMBO_END};
@@ -74,6 +61,23 @@ const uint16_t PROGMEM combo_asd[] = {KC_A, KC_S, KC_D, COMBO_END};
 combo_t key_combos[COMBO_COUNT] = {
   [COMBO_ASD] = COMBO_ACTION(combo_asd),
 };
+#endif /* ifdef COMBO_ENABLE */
+
+#define LOWER MO(_LOWER)
+#define RAISE MO(_RAISE)
+
+#ifdef AUDIO_ENABLE
+static bool muse_mode = false;
+static uint8_t last_muse_note = 0;
+static uint16_t muse_counter = 0;
+static uint8_t muse_offset = 70;
+static uint16_t muse_tempo = 50;
+
+static float plover_song[][2]    = SONG(PLOVER_SOUND);
+static float plover_gb_song[][2] = SONG(PLOVER_GOODBYE_SOUND);
+#endif /* ifdef AUDIO_ENABLE */
+
+static bool disable_keyboard_input;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -292,6 +296,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return !disable_keyboard_input;
 }
 
+#ifdef COMBO_ENABLE
 void process_combo_event(uint8_t combo_index, bool pressed) {
   if (pressed) {
     dprintf("Combo event #%u registered\n", combo_index);
@@ -303,7 +308,9 @@ void process_combo_event(uint8_t combo_index, bool pressed) {
     }
   }
 }
+#endif /* ifdef COMBO_ENABLE */
 
+#ifdef KEYBOARD_planck_rev6
 static void encoder_tap_code(uint8_t code) {
     register_code(code);
     wait_ms(10);
@@ -333,7 +340,7 @@ void encoder_update(bool clockwise) {
       }
     }
   } else {
-#endif
+#endif /* ifdef AUDIO_ENABLE */
     if (clockwise) {
       encoder_tap_code(KC_VOLU);
     } else {
@@ -341,7 +348,7 @@ void encoder_update(bool clockwise) {
     }
 #ifdef AUDIO_ENABLE
   }
-#endif
+#endif /* ifdef AUDIO_ENABLE */
 }
 
 void dip_switch_update_user(uint8_t index, bool active) {
@@ -382,6 +389,7 @@ void dip_switch_update_user(uint8_t index, bool active) {
             break;
     }
 }
+#endif /* ifdef KEYBOARD_planck_rev6 */
 
 #ifdef AUDIO_ENABLE
 void matrix_scan_user(void) {
@@ -402,7 +410,6 @@ void matrix_scan_user(void) {
         }
     }
 }
-#endif
 
 bool music_mask_user(uint16_t keycode) {
   switch (keycode) {
@@ -413,5 +420,6 @@ bool music_mask_user(uint16_t keycode) {
       return true;
   }
 }
+#endif /* ifdef AUDIO_ENABLE */
 
 // vim: tabstop=2 softtabstop=2 shiftwidth=2 expandtab textwidth=80 filetype=c

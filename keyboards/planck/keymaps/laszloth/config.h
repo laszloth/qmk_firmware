@@ -1,3 +1,5 @@
+/* laszloth keymap */
+
 #pragma once
 
 #ifdef AUDIO_ENABLE
@@ -8,6 +10,7 @@
                               SONG(COLEMAK_SOUND), \
                               SONG(DVORAK_SOUND) \
                             }
+
 #define AUDIO_CLICKY
 #define AUDIO_CLICKY_FREQ_RANDOMNESS 5.0f
 #endif
@@ -39,6 +42,7 @@
 // Most tactile encoders have detents every 4 stages
 #define ENCODER_RESOLUTION 4
 
+/* laszloth keymap values */
 #define TAPPING_TERM 175
 #define COMBO_COUNT 1
 #define COMBO_TERM 250
