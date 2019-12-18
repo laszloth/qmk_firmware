@@ -75,6 +75,13 @@ static uint16_t muse_tempo = 50;
 
 static float plover_song[][2]    = SONG(PLOVER_SOUND);
 static float plover_gb_song[][2] = SONG(PLOVER_GOODBYE_SOUND);
+
+#ifdef KEYBOARD_planck_rev6
+static bool noisy_mode;
+static float audio_on_song[][2]  = SONG(AUDIO_ON_SOUND);
+static float audio_off_song[][2] = SONG(AUDIO_OFF_SOUND);
+#endif /* ifdef KEYBOARD_planck_rev6 */
+
 #endif /* ifdef AUDIO_ENABLE */
 
 static bool disable_keyboard_input;
@@ -343,8 +350,16 @@ void encoder_update(bool clockwise) {
 #endif /* ifdef AUDIO_ENABLE */
     if (clockwise) {
       encoder_tap_code(KC_VOLU);
+#ifdef AUDIO_ENABLE
+      if (noisy_mode)
+        PLAY_SONG(audio_on_song);
+#endif
     } else {
       encoder_tap_code(KC_VOLD);
+#ifdef AUDIO_ENABLE
+      if (noisy_mode)
+        PLAY_SONG(audio_off_song);
+#endif
     }
 #ifdef AUDIO_ENABLE
   }
@@ -352,12 +367,14 @@ void encoder_update(bool clockwise) {
 }
 
 void dip_switch_update_user(uint8_t index, bool active) {
-    dprintf("DIP state change: %u to %s\n", index+1, active ? "ON" : "OFF");
-    switch (index) {
-        case 0: {
 #ifdef AUDIO_ENABLE
-            static bool play_sound = false;
+    static bool play_sound = false;
 #endif
+
+    dprintf("DIP state change: %u to %s\n", index+1, active ? "ON" : "OFF");
+
+    switch (index) {
+        case 0:
             if (active) {
 #ifdef AUDIO_ENABLE
                 if (play_sound) { PLAY_SONG(plover_song); }
@@ -369,11 +386,7 @@ void dip_switch_update_user(uint8_t index, bool active) {
 #endif
                 layer_off(_ADJUST);
             }
-#ifdef AUDIO_ENABLE
-            play_sound = true;
-#endif
             break;
-        }
         case 1:
 #ifdef AUDIO_ENABLE
             muse_mode = active;
@@ -385,6 +398,11 @@ void dip_switch_update_user(uint8_t index, bool active) {
         case 3:
 #ifdef AUDIO_CLICKY
             active ? clicky_on() : clicky_off();
+#endif
+#ifdef AUDIO_ENABLE
+            noisy_mode = active;
+            if (play_sound && active) { PLAY_SONG(audio_on_song); }
+            play_sound = true;
 #endif
             break;
     }
@@ -422,4 +440,4 @@ bool music_mask_user(uint16_t keycode) {
 }
 #endif /* ifdef AUDIO_ENABLE */
 
-// vim: tabstop=2 softtabstop=2 shiftwidth=2 expandtab textwidth=80 filetype=c
+// vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab textwidth=80 filetype=c
