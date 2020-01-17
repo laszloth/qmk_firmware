@@ -7,6 +7,7 @@ DYNAMIC_MACRO_ENABLE = yes
 COMBO_ENABLE = yes
 else
 CONSOLE_ENABLE = no
+BACKLIGHT_ENABLE = yes
 endif
 
 ifeq ($(strip $(AUDIO_ENABLE)), yes)
