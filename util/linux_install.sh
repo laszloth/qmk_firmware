@@ -78,9 +78,9 @@ elif grep ID /etc/os-release | grep -qE 'debian|ubuntu'; then
 
 elif grep ID /etc/os-release | grep -q 'arch\|manjaro'; then
 	sudo pacman --needed -U https://archive.archlinux.org/packages/a/avr-gcc/avr-gcc-8.3.0-1-x86_64.pkg.tar.xz
+	sudo pacman --needed -U https://archive.archlinux.org/packages/a/arm-none-eabi-gcc/arm-none-eabi-gcc-8.3.0-1-x86_64.pkg.tar.xz
 	sudo pacman -S --needed \
 		arm-none-eabi-binutils \
-		arm-none-eabi-gcc \
 		arm-none-eabi-newlib \
 		avrdude \
 		avr-binutils \
