@@ -54,13 +54,13 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 
 #ifdef COMBO_ENABLE
 enum combo_events {
-  COMBO_ASD,
+  COMBO_ASA,
 };
 
-const uint16_t PROGMEM combo_asd[] = {KC_A, KC_S, KC_D, COMBO_END};
+const uint16_t PROGMEM combo_asa[] = {KC_A, KC_S, KC_A, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
-  [COMBO_ASD] = COMBO_ACTION(combo_asd),
+  [COMBO_ASA] = COMBO_ACTION(combo_asa),
 };
 #endif /* ifdef COMBO_ENABLE */
 
@@ -310,7 +310,7 @@ void process_combo_event(uint8_t combo_index, bool pressed) {
     dprintf("Combo event #%u registered\n", combo_index);
 
     switch(combo_index) {
-      case COMBO_ASD:
+      case COMBO_ASA:
         tap_code16(KC_ESC);
         break;
     }
