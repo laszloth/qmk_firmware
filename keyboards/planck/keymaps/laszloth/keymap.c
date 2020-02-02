@@ -1,5 +1,5 @@
 /* Copyright 2015-2017 Jack Humbert
- * Copyright 2019 Laszlo Toth
+ * Copyright 2019-2020 Laszlo Toth
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,12 +77,11 @@ static uint16_t muse_tempo = 50;
 static float plover_song[][2]    = SONG(PLOVER_SOUND);
 static float plover_gb_song[][2] = SONG(PLOVER_GOODBYE_SOUND);
 
-#ifdef KEYBOARD_planck_rev6
 static bool noisy_mode;
 static float audio_on_song[][2]  = SONG(AUDIO_ON_SOUND);
+#ifdef KEYBOARD_planck_rev6
 static float audio_off_song[][2] = SONG(AUDIO_OFF_SOUND);
 #endif /* ifdef KEYBOARD_planck_rev6 */
-
 #endif /* ifdef AUDIO_ENABLE */
 
 static bool disable_keyboard_input;
@@ -244,7 +243,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       break;
     case BACKLIT:
       if (record->event.pressed) {
-        register_code(KC_RSFT);
         #ifdef RGBLIGHT_ENABLE
           if (IS_LAYER_ON(_LOWER)) {
             rgblight_mode(rgblight_get_mode());
@@ -253,13 +251,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           }
         #endif
         #ifdef BACKLIGHT_ENABLE
-          backlight_step();
+          if (IS_LAYER_ON(_LOWER)) {
+            clicky_toggle();
+            noisy_mode = !noisy_mode;
+            if (noisy_mode)
+              PLAY_SONG(audio_on_song);
+          } else {
+            backlight_step();
+          }
         #endif
         #ifdef KEYBOARD_planck_rev5
           writePinLow(E6);
         #endif
       } else {
-        unregister_code(KC_RSFT);
         #ifdef KEYBOARD_planck_rev5
           writePinHigh(E6);
         #endif
@@ -440,5 +444,9 @@ bool music_mask_user(uint16_t keycode) {
   }
 }
 #endif /* ifdef AUDIO_ENABLE */
+
+void keyboard_post_init_user(void) {
+    clicky_off();
+}
 
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab textwidth=80 filetype=c
