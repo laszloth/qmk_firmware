@@ -397,10 +397,10 @@ void dip_switch_update_user(uint8_t index, bool active) {
             disable_keyboard_input = active;
             break;
         case 3:
+#ifdef AUDIO_ENABLE
 #ifdef AUDIO_CLICKY
             active ? clicky_on() : clicky_off();
 #endif
-#ifdef AUDIO_ENABLE
             noisy_mode = active;
             if (play_sound && active) { PLAY_SONG(audio_on_song); }
             play_sound = true;
