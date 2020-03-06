@@ -278,10 +278,6 @@ static void encoder_tap_code(uint8_t code) {
 }
 
 void encoder_update(bool clockwise) {
-    /* encoder direction is reversed
-     * see: https://github.com/qmk/qmk_firmware/pull/7325 */
-    clockwise = !clockwise;
-
     dprintf("Encoder %s\n", clockwise ? "CW" : "CCW");
 
 #ifdef AUDIO_ENABLE
