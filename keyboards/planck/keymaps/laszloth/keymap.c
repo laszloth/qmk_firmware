@@ -323,6 +323,8 @@ void dip_switch_update_user(uint8_t index, bool active) {
     dprintf("DIP state change: %u to %s\n", index+1, active ? "ON" : "OFF");
 
     switch (index) {
+
+        /* Toggle adjust layer  */
         case 0:
             if (active) {
 #ifdef AUDIO_ENABLE
@@ -336,14 +338,20 @@ void dip_switch_update_user(uint8_t index, bool active) {
                 layer_off(_ADJUST);
             }
             break;
+
+        /* Toggle muse mode */
         case 1:
 #ifdef AUDIO_ENABLE
             muse_mode = active;
 #endif
             break;
+
+        /* Toggle keyboard input disabled/enabled */
         case 2:
             disable_keyboard_input = active;
             break;
+
+        /* Toggle noisy mode */
         case 3:
 #ifdef AUDIO_ENABLE
 #ifdef AUDIO_CLICKY
