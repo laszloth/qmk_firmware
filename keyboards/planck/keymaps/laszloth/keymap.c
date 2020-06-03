@@ -31,6 +31,7 @@ enum planck_keycodes {
     PLOVER,
     BACKLIT,
     EXT_PLV,
+    TOGGLE_INPUT,
     MACRO_COPYALL,
 };
 
@@ -159,7 +160,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Adjust (Lower + Raise)
      *                      v------------------------RGB CONTROL--------------------v
      * ,-----------------------------------------------------------------------------------.
-     * |      | Reset|Debug | RGB  |RGBMOD| HUE+ | HUE- | SAT+ | SAT- |BRGTH+|BRGTH-|  Del |
+     * |      | Reset|Debug | RGB  |RGBMOD| HUE+ | HUE- | SAT+ | SAT- |BRGTH+|BRGTH-|Tglinp|
      * |------+------+------+------+------+------+------+------+------+------+------+------|
      * |      |      |MUSmod|Aud on|Audoff|AGnorm|AGswap|Qwerty|      |      |Plover|      |
      * |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -169,7 +170,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * `-----------------------------------------------------------------------------------'
      */
     [_ADJUST] = LAYOUT_planck_grid(
-            _______, RESET,   DEBUG,   RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD,  RGB_VAI, RGB_VAD, KC_DEL ,
+            _______, RESET,   DEBUG,   RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD,  RGB_VAI, RGB_VAD, TOGGLE_INPUT,
             _______, _______, MU_MOD,  AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, QWERTY,  _______,  _______, PLOVER,  _______,
             _______, MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  TERM_ON, TERM_OFF, _______, _______, _______,
             _______, _______, _______, _______, _______, _______, _______, _______, _______,  _______, _______, _______
@@ -182,6 +183,20 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (keycode == TOGGLE_INPUT) {
+        if (record->event.pressed) {
+            disable_keyboard_input = !disable_keyboard_input;
+        }
+        return false;
+    }
+
+    if (disable_keyboard_input) {
+        if (record->event.pressed) {
+            dprintf("Keyboard input is disabled\n");
+        }
+        return false;
+    }
+
     switch (keycode) {
         case QWERTY:
             if (record->event.pressed) {
@@ -253,7 +268,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
             break;
     }
-    return !disable_keyboard_input;
+    return true;
 }
 
 #ifdef COMBO_ENABLE
@@ -398,6 +413,10 @@ bool music_mask_user(uint16_t keycode) {
 #endif /* ifdef AUDIO_ENABLE */
 
 void keyboard_post_init_user(void) {
+    //debug_enable=true;
+    //debug_matrix=true;
+    //debug_keyboard=true;
+    //debug_mouse=true;
     clicky_off();
 }
 
