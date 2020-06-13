@@ -45,6 +45,11 @@
 #define ENCODER_RESOLUTION 4
 
 /* laszloth keymap values */
+#ifdef TAP_DANCE_ENABLE
 #define TAPPING_TERM 120
+#endif /* ifdef TAP_DANCE_ENABLE */
+
+#ifdef COMBO_ENABLE
 #define COMBO_COUNT 1
 #define COMBO_TERM 250
+#endif /* ifdef COMBO_ENABLE */

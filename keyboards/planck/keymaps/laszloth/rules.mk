@@ -4,7 +4,7 @@ TAP_DANCE_ENABLE = yes
 
 ifeq ($(strip $(KEYBOARD)), planck/rev6)
 DYNAMIC_MACRO_ENABLE = yes
-COMBO_ENABLE = yes
+COMBO_ENABLE = no
 endif
 
 ifeq ($(strip $(KEYBOARD)), planck/rev4)
