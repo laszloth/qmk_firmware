@@ -79,6 +79,8 @@ static float audio_on_song[][2]  = SONG(AUDIO_ON_SOUND);
 #ifdef KEYBOARD_planck_rev6
 static float audio_off_song[][2] = SONG(AUDIO_OFF_SOUND);
 #endif /* ifdef KEYBOARD_planck_rev6 */
+static float toggle_input_on_song[][2] = SONG(PLOVER_SOUND);
+static float toggle_input_off_song[][2] = SONG(PLOVER_GOODBYE_SOUND);
 #endif /* ifdef AUDIO_ENABLE */
 
 static bool disable_keyboard_input;
@@ -186,6 +188,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (keycode == TOGGLE_INPUT) {
         if (record->event.pressed) {
             disable_keyboard_input = !disable_keyboard_input;
+#ifdef AUDIO_ENABLE
+            if (disable_keyboard_input)
+                PLAY_SONG(toggle_input_off_song);
+            else
+                PLAY_SONG(toggle_input_on_song);
+#endif
         }
         return false;
     }
