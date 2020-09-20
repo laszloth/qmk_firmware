@@ -46,7 +46,7 @@
 
 /* laszloth keymap values */
 #ifdef TAP_DANCE_ENABLE
-#define TAPPING_TERM 120
+#define TAPPING_TERM 150
 #endif /* ifdef TAP_DANCE_ENABLE */
 
 #ifdef COMBO_ENABLE
