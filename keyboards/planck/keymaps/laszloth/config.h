@@ -53,3 +53,9 @@
 #define COMBO_COUNT 1
 #define COMBO_TERM 250
 #endif /* ifdef COMBO_ENABLE */
+
+#ifdef RGBLIGHT_ENABLE
+#define RGBLIGHT_SLEEP
+#define RGBLIGHT_ANIMATIONS
+#define RGBLIGHT_LAYERS
+#endif /* ifdef RGBLIGHT_ENABLE */

@@ -59,6 +59,26 @@ combo_t key_combos[COMBO_COUNT] = {
 };
 #endif /* ifdef COMBO_ENABLE */
 
+#ifdef RGBLIGHT_LAYERS
+/* All LEDs red when Caps Lock is on */
+const rgblight_segment_t PROGMEM rgb_cl_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+    { 0, RGBLED_NUM, HSV_RED });
+
+/* All LEDs cyan when L1 */
+const rgblight_segment_t PROGMEM rgb_l1_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+    { 0, RGBLED_NUM, HSV_CYAN });
+
+/* All LEDs purple when L2 is on */
+const rgblight_segment_t PROGMEM rgb_l2_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+    { 0, RGBLED_NUM, HSV_PURPLE });
+
+const rgblight_segment_t* const PROGMEM rgb_layers[] = RGBLIGHT_LAYERS_LIST(
+    rgb_cl_layer,
+    rgb_l1_layer,
+    rgb_l2_layer
+);
+#endif /* ifdef RGBLIGHT_LAYERS */
+
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
 
@@ -179,7 +199,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 layer_state_t layer_state_set_user(layer_state_t state) {
+    rgblight_set_layer_state(1, layer_state_cmp(state, 1));
+    rgblight_set_layer_state(2, layer_state_cmp(state, 2));
     return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
+}
+
+bool led_update_user(led_t led_state) {
+    rgblight_set_layer_state(0, led_state.caps_lock);
+    return true;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -214,8 +241,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
 #ifdef RGBLIGHT_ENABLE
                 if (IS_LAYER_ON(_LOWER)) {
+                    dprintf("** Saving current RGB mode to EEPROM **\n");
                     rgblight_mode(rgblight_get_mode());
                 } else {
+                    dprintf("** Stepping RGB mode **\n");
                     rgblight_step_noeeprom();
                 }
 #endif
@@ -423,7 +452,15 @@ void keyboard_post_init_user(void) {
     //debug_matrix=true;
     //debug_keyboard=true;
     //debug_mouse=true;
+
+#ifdef AUDIO_CLICKY
     clicky_off();
+#endif /* ifdef AUDIO_CLICKY */
+
+#ifdef RGBLIGHT_LAYERS
+    /* Enable the LED layers */
+    rgblight_layers = rgb_layers;
+#endif /* ifdef RGBLIGHT_LAYERS */
 }
 
 // vim: tabstop=4 softtabstop=4 shiftwidth=4 expandtab textwidth=80 filetype=c
